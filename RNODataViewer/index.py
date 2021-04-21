@@ -6,6 +6,7 @@ import glob
 from RNODataViewer.base.app import app
 import RNODataViewer.base.data_provider
 import RNODataViewer.file_list.file_list
+import RNODataViewer.station_selection.station_selection
 
 argparser = argparse.ArgumentParser(description="View RNO Data Set")
 argparser.add_argument('file_location', type=str, help="Path of folder")
@@ -16,6 +17,7 @@ RNODataViewer.base.data_provider.RNODataProvider().set_filenames(filenames)
 
 app.title = 'RNO Data Browser'
 app.layout = html.Div([
+    RNODataViewer.station_selection.station_selection.layout,
     RNODataViewer.file_list.file_list.layout
 ])
 
