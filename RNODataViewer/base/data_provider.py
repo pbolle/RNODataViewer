@@ -17,3 +17,12 @@ class RNODataProvider():
 
     def get_file_names(self):
         return self.__filenames
+
+    def get_first_event(self, station_id):
+        for event in self.__event_io.get_events():
+            if station_id in event.get_station_ids():
+                return event
+        return None
+
+    def get_n_events(self):
+        return self.__event_io.get_n_events()

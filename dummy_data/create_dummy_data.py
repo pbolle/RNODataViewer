@@ -5,6 +5,7 @@ import NuRadioReco.framework.channel
 import NuRadioReco.modules.io.eventWriter
 from NuRadioReco.utilities import units
 import argparse
+import astropy.time
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -47,7 +48,10 @@ for i in range(args.n_events):
     station = NuRadioReco.framework.station.Station(args.station_id)
     for i_channel in range(10):
         channel = NuRadioReco.framework.channel.Channel(i_channel)
-        channel.set_trace(np.random.normal(0, 1.e-3, args.n_samples), 1.5 * units.GHz)
+        spec = np.abs(np.random.normal(0, 1.e-1, args.n_samples // 2 + 1) + 1. / np.sqrt(np.abs(np.arange(args.n_samples // 2 + 1) - 100) + 10))
+        spec[0] = 0
+        channel.set_frequency_spectrum(spec, 1.5 * units.GHz)
         station.add_channel(channel)
+    station.set_station_time(astropy.time.Time.now() + astropy.time.TimeDelta(i * .005, format='sec'))
     event.set_station(station)
     event_writer.run(event)

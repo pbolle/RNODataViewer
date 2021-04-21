@@ -12,7 +12,7 @@ layout = html.Div([
                     html.Div('', className='icon-cw')
                 ], id='file-list-reload-button', className='btn btn-primary')
             ], style={'flex': 'none'})
-        ], style={'display': 'flex'})
+        ], className='flexi-box')
     ], className='panel panel-heading'),
     html.Div([
         html.Div('', id='file-list-display')

@@ -38,3 +38,15 @@
   flex: 1;
   padding: 5px;
 }
+.flexi-box {
+  display: flex;
+}
+.flexi-element-1 {
+  flex: 1;
+}
+.flexi-element-4 {
+  flex: 4
+}
+.blocki-box {
+  display: box;
+}
