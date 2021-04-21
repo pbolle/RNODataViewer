@@ -16,8 +16,8 @@ layout = html.Div([
     ], className='panel panel-heading'),
     html.Div([
         html.Div('', id='file-list-display')
-    ], className='panel panel-body')
-], className='panel panel-default', style={'max-height': '20%'})
+    ], className='panel panel-body', style={'max-height': '200px', 'overflow': 'scroll'})
+], className='panel panel-default')
 
 
 @app.callback(
