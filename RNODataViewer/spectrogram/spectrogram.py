@@ -7,6 +7,7 @@ import plotly.graph_objs as go
 import plotly.subplots
 import plotly.express
 import RNODataViewer.base.data_provider
+import RNODataViewer.base.error_message
 from NuRadioReco.utilities import units
 
 layout = html.Div([
@@ -27,18 +28,6 @@ layout = html.Div([
     ], className='panel panel-default')
 ])
 
-empty_message = {
-    'xaxis': {'visible': False},
-    'yaxis': {'visible': False},
-    'annotations': [{
-        'xref': 'paper',
-        'yref': 'paper',
-        'showarrow': False,
-        'font': {'size': 28}
-    }]
-}
-
-
 @app.callback(
     Output('spectrogram-plot', 'figure'),
     [Input('spectrogram-reload-button', 'n_clicks')],
@@ -47,19 +36,13 @@ empty_message = {
 )
 def update_spectrogram_plot(n_clicks, station_id, channel_ids):
     if station_id is None:
-        msg = {'layout': empty_message}
-        msg['layout']['annotations'][0]['text'] = 'No Station selected'
-        return msg
+        return RNODataViewer.base.error_message.get_error_message('No Station selected')
     if len(channel_ids) == 0:
-        msg = {'layout': empty_message}
-        msg['layout']['annotations'][0]['text'] = 'No Channels selected'
-        return msg
+        return RNODataViewer.base.error_message.get_error_message('No Channels selected')
     data_provider = RNODataViewer.base.data_provider.RNODataProvider()
     first_event = data_provider.get_first_event(station_id)
     if first_event is None:
-        msg = {'layout': empty_message}
-        msg['layout']['annotations'][0]['text'] = 'Station {} not found in events'.format(station_id)
-        return msg
+        return RNODataViewer.base.error_message.get_error_message('Station {} not found in events'.format(station_id))
     channel = first_event.get_station(station_id).get_channel(channel_ids[0])
     spectra = np.empty((len(channel_ids), data_provider.get_n_events(), channel.get_number_of_samples() // 2 + 1))
     times = []
