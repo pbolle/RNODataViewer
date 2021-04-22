@@ -5,7 +5,6 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 import plotly.subplots
-import plotly.express
 import RNODataViewer.base.data_provider
 import RNODataViewer.base.error_message
 from NuRadioReco.utilities import units
