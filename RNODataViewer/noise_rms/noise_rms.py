@@ -39,7 +39,7 @@ def update_noise_rms_plot(n_clicks, station_id, channel_ids):
         return RNODataViewer.base.error_message.get_error_message('No Station selected')
     if len(channel_ids) == 0:
         return RNODataViewer.base.error_message.get_error_message('No Channels selected')
-    data_provider = RNODataViewer.base.data_provider.RNODataProvider()
+    data_provider = RNODataViewer.base.data_provider.RNODataProvider(channels=channel_ids)
     first_event = data_provider.get_first_event(station_id)
     if first_event is None:
         return RNODataViewer.base.error_message.get_error_message('Station {} not found in events'.format(station_id))
@@ -67,4 +67,17 @@ def update_noise_rms_plot(n_clicks, station_id, channel_ids):
         xaxis={'title': 'time'},
         yaxis={'title': 'noise RMS [mV]'}
     )
+    fig.update_layout(
+        xaxis_tickformatstops = [
+            dict(dtickrange=[None, 1000], value="%H:%M:%S.%L"),
+            dict(dtickrange=[1000, 60000], value="%H:%M:%S"),
+            dict(dtickrange=[60000, 3600000], value="%H:%M"),
+            dict(dtickrange=[3600000, 86400000], value="%H:%M %e.%B"),
+            dict(dtickrange=[86400000, 604800000], value="%e. %b %y"),
+            dict(dtickrange=[604800000, "M1"], value="%e. %b '%y"),
+            dict(dtickrange=["M1", "M12"], value="%b '%y M"),
+            dict(dtickrange=["M12", None], value="%Y")
+    ]
+    )
+    fig.update_xaxes(nticks=10)
     return fig
