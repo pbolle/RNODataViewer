@@ -53,22 +53,19 @@ def update_spectrogramuproot_plot(n_clicks, station_id, channel_ids):
     data_provider.set_iterators()
 
     for headers, events in zip(data_provider.uproot_iterator_header, data_provider.uproot_iterator_data):
-        print(events['event_number'])
         mask_station = events['station_number'] == station_id
-        print(len(mask_station))
         gps_times.append(headers['readout_time'][mask_station])
         for i_channel, channel_id in enumerate(channel_ids):
             if i_channel not in spectra:
                 spectra[i_channel] = []
             traces = np.array(events['radiant_data[24][2048]'][:,channel_id,:])[mask_station]
-            print(np.shape(traces))
             def convert(data):
                 tr = BaseTrace()
                 tr.set_trace((data-np.mean(data))*units.mV, sampling_rate=1./(0.5*units.ns))
                 return np.abs(tr.get_frequency_spectrum())
             spec = np.apply_along_axis(convert, 1, np.array(traces))
             spectra[i_channel].append(spec)
-    
+
     gps_times = np.concatenate(gps_times)
     for it in spectra:
         spectra[it]= np.concatenate(spectra[it])
