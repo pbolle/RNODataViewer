@@ -1,7 +1,9 @@
-import RNODataViewer.base.data_provider
+import RNODataViewer.base.data_provider_nur
+import RNODataViewer.base.data_provider_root
 from RNODataViewer.base.app import app
 import dash_html_components as html
-from dash.dependencies import Input, Output
+import dash_core_components as dcc
+from dash.dependencies import Input, Output, State
 
 layout = html.Div([
     html.Div([
@@ -22,10 +24,14 @@ layout = html.Div([
 
 @app.callback(
     Output('file-list-display', 'children'),
-    [Input('file-list-reload-button', 'n_clicks')]
+    [Input('file-list-reload-button', 'n_clicks')],
+    [State('file-type-dropdown', 'value')]
 )
-def update_file_list(n_clicks):
-    data_provider = RNODataViewer.base.data_provider.RNODataProvider()
+def update_file_list(n_clicks, file_type):
+    if file_type == 'root':
+        data_provider = RNODataViewer.base.data_provider_root.RNODataProviderRoot()
+    else:
+        data_provider = RNODataViewer.base.data_provider_nur.RNODataProvider()
     filenames = data_provider.get_file_names()
     if filenames is None:
         return ''

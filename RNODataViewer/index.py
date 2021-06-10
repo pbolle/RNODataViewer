@@ -4,7 +4,8 @@ import dash
 import argparse
 import glob
 from RNODataViewer.base.app import app
-import RNODataViewer.base.data_provider
+import RNODataViewer.base.data_provider_root
+import RNODataViewer.base.data_provider_nur
 import RNODataViewer.file_list.file_list
 import RNODataViewer.station_selection.station_selection
 import RNODataViewer.spectrogram.spectrogram
@@ -14,8 +15,10 @@ import RNODataViewer.trigger_rate.trigger_rate_uproot
 argparser = argparse.ArgumentParser(description="View RNO Data Set")
 argparser.add_argument('file_location', type=str, help="Path of folder")
 parsed_args = argparser.parse_args()
-filenames = glob.glob('{}/*.root'.format(parsed_args.file_location))
-RNODataViewer.base.data_provider.RNODataProvider().set_filenames(filenames)
+filenames_root = glob.glob('{}/*.root'.format(parsed_args.file_location))
+RNODataViewer.base.data_provider_root.RNODataProviderRoot().set_filenames(filenames_root)
+filenames_nur = glob.glob('{}/*.nur'.format(parsed_args.file_location))
+RNODataViewer.base.data_provider_nur.RNODataProvider().set_filenames(filenames_nur)
 
 
 app.title = 'RNO Data Browser'

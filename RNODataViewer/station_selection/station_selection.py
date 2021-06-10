@@ -7,6 +7,19 @@ from RNODataViewer.station_selection.station_list import station_entries, channe
 
 layout = html.Div([
     html.Div([
+            html.Div('File Type', className='option-label'),
+            html.Div([
+                dcc.Dropdown(
+                    id='file-type-dropdown',
+                    options=[
+                        {'label': 'ROOT', 'value': 'root'},
+                        {'label': '.nur', 'value': 'nur'}
+                    ],
+                    value='root'
+                )
+            ], className='option-select')
+        ], className='option-set'),
+    html.Div([
         html.Div('Station ID', className='option-label'),
         html.Div([
             dcc.Dropdown(

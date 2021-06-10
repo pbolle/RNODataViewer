@@ -6,7 +6,7 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 import plotly.subplots
-import RNODataViewer.base.data_provider
+import RNODataViewer.base.data_provider_root
 import RNODataViewer.base.error_message
 from NuRadioReco.utilities import units
 from astropy.time import Time, TimeDelta
@@ -40,7 +40,7 @@ def update_triggeruproot_plot(n_clicks, station_id, channel_ids):
         return RNODataViewer.base.error_message.get_error_message('No Station selected')
     if len(channel_ids) == 0:
         return RNODataViewer.base.error_message.get_error_message('No Channels selected')
-    data_provider = RNODataViewer.base.data_provider.RNODataProvider(channels=channel_ids)
+    data_provider = RNODataViewer.base.data_provider_root.RNODataProviderRoot(channels=channel_ids)
     first_event = data_provider.get_first_event(station_id)
     if first_event is None:
         return RNODataViewer.base.error_message.get_error_message('Station {} not found in events'.format(station_id))
