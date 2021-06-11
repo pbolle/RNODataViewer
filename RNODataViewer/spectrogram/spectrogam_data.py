@@ -32,7 +32,7 @@ def get_spectrogram_data_root(station_id, channel_ids):
     data_provider = RNODataViewer.base.data_provider_root.RNODataProviderRoot(channels=channel_ids)
     first_event = data_provider.get_first_event(station_id)
     if first_event is None:
-        return None, None, None
+        return False, None, None, None
     channel = first_event.get_station(station_id).get_channel(channel_ids[0])
     spectra = {}  # np.empty((len(channel_ids), data_provider.get_n_events(), channel.get_number_of_samples() // 2 + 1))
     gps_times = []

@@ -8,6 +8,7 @@ import RNODataViewer.base.data_provider_nur
 import RNODataViewer.base.error_message
 from NuRadioReco.utilities import units
 from NuRadioReco.framework.parameters import channelParameters as chp
+import RNODataViewer.noise_rms.noise_rms_data
 
 
 layout = html.Div([
@@ -28,31 +29,26 @@ layout = html.Div([
     ], className='panel panel-default')
 ])
 
+
 @app.callback(
     Output('noise-rms-plot', 'figure'),
     [Input('noise-rms-reload-button', 'n_clicks')],
     [State('station-id-dropdown', 'value'),
-     State('channel-id-dropdown', 'value')]
+     State('channel-id-dropdown', 'value'),
+     State('file-type-dropdown', 'value')]
 )
-def update_noise_rms_plot(n_clicks, station_id, channel_ids):
+def update_noise_rms_plot(n_clicks, station_id, channel_ids, file_type):
     if station_id is None:
         return RNODataViewer.base.error_message.get_error_message('No Station selected')
     if len(channel_ids) == 0:
         return RNODataViewer.base.error_message.get_error_message('No Channels selected')
-    data_provider = RNODataViewer.base.data_provider_nur.RNODataProvider(channels=channel_ids)
-    first_event = data_provider.get_first_event(station_id)
-    if first_event is None:
+    if file_type == 'nur':
+        has_station, times, noise_rms, point_labels = RNODataViewer.noise_rms.noise_rms_data.get_noise_rms_data_nur(station_id, channel_ids)
+    else:
+        has_station, times, noise_rms, point_labels = RNODataViewer.noise_rms.noise_rms_data.get_noise_rms_data_root(station_id, channel_ids)
+    if not has_station:
         return RNODataViewer.base.error_message.get_error_message('Station {} not found in events'.format(station_id))
-    noise_rms = np.zeros((len(channel_ids), data_provider.get_n_events()))
-    times = []
-    point_labels = []
-    for i_event, event in enumerate(data_provider.get_event_iterator()()):
-        point_labels.append('Event {}, {}'.format(event.get_run_number(), event.get_id()))
-        if station_id in event.get_station_ids():
-            station = event.get_station(station_id)
-            times.append(station.get_station_time().fits)
-            for i_channel, channel_id in enumerate(channel_ids):
-                noise_rms[i_channel, i_event] = station.get_channel(channel_id).get_parameter(chp.noise_rms)
+    print(noise_rms.shape, times.shape)
     plots = []
     for i_channel, channel_id in enumerate(channel_ids):
         plots.append(go.Scatter(
@@ -68,7 +64,7 @@ def update_noise_rms_plot(n_clicks, station_id, channel_ids):
         yaxis={'title': 'noise RMS [mV]'}
     )
     fig.update_layout(
-        xaxis_tickformatstops = [
+        xaxis_tickformatstops=[
             dict(dtickrange=[None, 1000], value="%H:%M:%S.%L"),
             dict(dtickrange=[1000, 60000], value="%H:%M:%S"),
             dict(dtickrange=[60000, 3600000], value="%H:%M"),

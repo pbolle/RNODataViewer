@@ -10,7 +10,6 @@ import RNODataViewer.file_list.file_list
 import RNODataViewer.station_selection.station_selection
 import RNODataViewer.spectrogram.spectrogram
 import RNODataViewer.noise_rms.noise_rms
-import RNODataViewer.spectrogram.spectrogram_uproot
 import RNODataViewer.trigger_rate.trigger_rate_uproot
 argparser = argparse.ArgumentParser(description="View RNO Data Set")
 argparser.add_argument('file_location', type=str, help="Path of folder")
@@ -38,11 +37,6 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             RNODataViewer.spectrogram.spectrogram.layout
-        ], className='flexi-element-1')
-    ], className='flexi-box'),
-    html.Div([
-        html.Div([
-            RNODataViewer.spectrogram.spectrogram_uproot.layout
         ], className='flexi-element-1')
     ], className='flexi-box'),
     html.Div([

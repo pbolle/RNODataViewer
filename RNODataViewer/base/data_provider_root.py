@@ -1,6 +1,7 @@
 import NuRadioReco.utilities.metaclasses
 import six
 from NuRadioReco.modules.io.rno_g.readRNOGData import readRNOGData
+import uproot
 
 
 @six.add_metaclass(NuRadioReco.utilities.metaclasses.Singleton)
@@ -38,3 +39,24 @@ class RNODataProviderRoot:
 
     def get_n_events(self):
         return self.__event_io.get_n_events()
+
+    def get_waveforms(self, station_id, channels):
+        for filename in self.__filenames:
+            file = uproot.open(filename)
+            waveforms = file['waveforms']['radiant_data[24][2048]'].array(library='np')
+            station_ids = file['waveforms']['station_number'].array(library='np')
+            return waveforms[(station_ids == station_id), :, :][:, channels]
+
+    def get_event_times(self, station_id):
+        for filename in self.__filenames:
+            file = uproot.open(filename)
+            station_ids = file['waveforms']['station_number'].array(library='np')
+            readout_times = file['header']['readout_time'].array(library='np')
+            return readout_times[station_ids == station_id]
+
+    def get_event_ids(self, station_id):
+        for filename in self.__filenames:
+            file = uproot.open(filename)
+            station_ids = file['waveforms']['station_number'].array(library='np')
+            event_ids = file['waveforms']['event_number'].array(library='np')
+            return event_ids[station_ids == station_id]
