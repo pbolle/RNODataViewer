@@ -48,7 +48,6 @@ def update_noise_rms_plot(n_clicks, station_id, channel_ids, file_type):
         has_station, times, noise_rms, point_labels = RNODataViewer.noise_rms.noise_rms_data.get_noise_rms_data_root(station_id, channel_ids)
     if not has_station:
         return RNODataViewer.base.error_message.get_error_message('Station {} not found in events'.format(station_id))
-    print(noise_rms.shape, times.shape)
     plots = []
     for i_channel, channel_id in enumerate(channel_ids):
         plots.append(go.Scatter(

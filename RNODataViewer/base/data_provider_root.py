@@ -2,6 +2,7 @@ import NuRadioReco.utilities.metaclasses
 import six
 from NuRadioReco.modules.io.rno_g.readRNOGData import readRNOGData
 import uproot
+import numpy as np
 
 
 @six.add_metaclass(NuRadioReco.utilities.metaclasses.Singleton)
@@ -48,15 +49,19 @@ class RNODataProviderRoot:
             return waveforms[(station_ids == station_id), :, :][:, channels]
 
     def get_event_times(self, station_id):
+        station_ids = np.array([], dtype=int)
+        readout_times = np.array([], dtype=float)
         for filename in self.__filenames:
             file = uproot.open(filename)
-            station_ids = file['waveforms']['station_number'].array(library='np')
-            readout_times = file['header']['readout_time'].array(library='np')
-            return readout_times[station_ids == station_id]
+            station_ids = np.append(station_ids, file['waveforms']['station_number'].array(library='np'))
+            readout_times = np.append(readout_times, file['header']['readout_time'].array(library='np'))
+        return readout_times[station_ids == station_id]
 
     def get_event_ids(self, station_id):
+        station_ids = np.array([], dtype=int)
+        event_ids = np.array([], dtype=float)
         for filename in self.__filenames:
             file = uproot.open(filename)
-            station_ids = file['waveforms']['station_number'].array(library='np')
-            event_ids = file['waveforms']['event_number'].array(library='np')
-            return event_ids[station_ids == station_id]
+            station_ids = np.append(station_ids, file['waveforms']['station_number'].array(library='np'))
+            event_ids = np.append(event_ids, file['waveforms']['event_number'].array(library='np'))
+        return event_ids[station_ids == station_id]

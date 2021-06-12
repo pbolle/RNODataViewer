@@ -2,7 +2,7 @@ import RNODataViewer.base.data_provider_nur
 import RNODataViewer.base.data_provider_root
 from NuRadioReco.framework.parameters import channelParameters as chp
 import numpy as np
-
+import astropy.time
 
 def get_noise_rms_data_nur(station_id, channel_ids):
     data_provider = RNODataViewer.base.data_provider_nur.RNODataProvider(channels=channel_ids)
@@ -29,4 +29,4 @@ def get_noise_rms_data_root(station_id, channel_ids):
     waveforms -= np.mean(waveforms, axis=2, keepdims=True)
     noise_rms = np.sqrt(np.mean(waveforms**2, axis=2))
     event_ids = data_provider.get_event_ids(station_id)
-    return True, times, noise_rms.T, event_ids
+    return True, astropy.time.Time(times, format="unix", scale="utc").fits, noise_rms.T, event_ids
