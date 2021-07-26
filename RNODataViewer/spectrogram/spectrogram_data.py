@@ -40,7 +40,7 @@ def get_spectrogram_data_root(station_id, channel_ids):
     data_provider.set_iterators()
 
     for headers, events in zip(data_provider.uproot_iterator_header, data_provider.uproot_iterator_data):
-        mask_station = events['station_number'] == station_id
+        mask_station = headers['station_number'] == station_id
         gps_times.append(headers['readout_time'][mask_station])
         for i_channel, channel_id in enumerate(channel_ids):
             if i_channel not in spectra:
@@ -49,9 +49,11 @@ def get_spectrogram_data_root(station_id, channel_ids):
 
             def convert(data):
                 tr = NuRadioReco.framework.base_trace.BaseTrace()
-                tr.set_trace((data - np.mean(data)) * units.mV, sampling_rate=1. / (0.5 * units.ns))
-                return np.abs(tr.get_frequency_spectrum())
-
+                tr.set_trace(data * units.mV, sampling_rate=1. / (0.5 * units.ns))
+                spectrum =  np.abs(tr.get_frequency_spectrum())
+                # set DC to zero
+                spectrum[0] = 0
+                return spectrum
             spec = np.apply_along_axis(convert, 1, np.array(traces))
             spectra[i_channel].append(spec)
 

@@ -65,7 +65,7 @@ def update_triggeruproot_plot(n_clicks, station_id, channel_ids):
         trigger_masks[k] = np.concatenate(trigger_masks[k])
     trigger_masks["all"] = np.ones_like(trigger_masks['rf_trigger'])
 
-    bins = np.arange(min(gps_times), max(gps_times)+60, 60)#min(Time(gps_times, format="unix", scale="utc")), max(Time(gps_times, format="unix", scale="utc"))+dt, dt)
+    bins = np.arange(min(gps_times), max(gps_times)+60*15, 60*15)#min(Time(gps_times, format="unix", scale="utc")), max(Time(gps_times, format="unix", scale="utc"))+dt, dt)
     bins_fits = Time(bins, format="unix", scale="utc").fits
 
     contents, bins = np.histogram(np.array(gps_times), bins)
@@ -82,7 +82,7 @@ def update_triggeruproot_plot(n_clicks, station_id, channel_ids):
         contents, b = np.histogram(np.array(gps_times)[trigger_masks[key]], bins)
         plots.append(go.Scatter(
               x = bincenters,
-              y = contents/60.,
+              y = contents/(60.*15),
               mode='markers',
               name='Trigger: {}'.format(key)#,
               #text=point_labels

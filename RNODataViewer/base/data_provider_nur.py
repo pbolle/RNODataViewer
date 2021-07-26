@@ -11,8 +11,9 @@ class RNODataProvider():
         self.__channels = channels
 
     def set_filenames(self, filenames):
-        self.__filenames = filenames
-        self.__event_io = NuRadioReco.modules.io.NuRadioRecoio.NuRadioRecoio(filenames)
+        if len(filenames)>0:
+            self.__filenames = filenames
+            self.__event_io = NuRadioReco.modules.io.NuRadioRecoio.NuRadioRecoio(filenames)
 
     def get_event_iterator(self):
         return self.__event_io.get_events

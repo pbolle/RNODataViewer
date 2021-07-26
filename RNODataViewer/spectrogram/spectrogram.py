@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 import plotly.subplots
 import RNODataViewer.base.data_provider_nur
 import RNODataViewer.base.error_message
-import RNODataViewer.spectrogram.spectrogam_data
+import RNODataViewer.spectrogram.spectrogram_data
 from NuRadioReco.utilities import units
 
 layout = html.Div([
@@ -42,9 +42,9 @@ def update_spectrogram_plot(n_clicks, station_id, channel_ids, file_type):
     if len(channel_ids) == 0:
         return RNODataViewer.base.error_message.get_error_message('No Channels selected')
     if file_type == 'nur':
-        station_found, times, spectra, d_f = RNODataViewer.spectrogram.spectrogam_data.get_spectrogram_data_py(station_id, channel_ids)
+        station_found, times, spectra, d_f = RNODataViewer.spectrogram.spectrogram_data.get_spectrogram_data_py(station_id, channel_ids)
     else:
-        station_found, times, spectra, d_f = RNODataViewer.spectrogram.spectrogam_data.get_spectrogram_data_root(station_id, channel_ids)
+        station_found, times, spectra, d_f = RNODataViewer.spectrogram.spectrogram_data.get_spectrogram_data_root(station_id, channel_ids)
     if not station_found:
         return RNODataViewer.base.error_message.get_error_message('Station {} not found in events'.format(station_id))
     subplot_titles = []

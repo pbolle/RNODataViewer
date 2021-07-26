@@ -15,10 +15,11 @@ class RNODataProviderRoot:
         self.uproot_iterator_header = None
 
     def set_filenames(self, filenames):
-        self.__filenames = filenames
-        self.__event_io = readRNOGData()
-        self.__event_io.begin(filenames)
-        self.__event_io.run(channels=self.__channels)
+        if len(filenames) > 0:
+            self.__filenames = filenames
+            self.__event_io = readRNOGData()
+            self.__event_io.begin(filenames)
+            self.__event_io.run(channels=self.__channels)
 
     def set_iterators(self):
         self.__event_io = readRNOGData()
@@ -44,8 +45,10 @@ class RNODataProviderRoot:
     def get_waveforms(self, station_id, channels):
         for filename in self.__filenames:
             file = uproot.open(filename)
+            if 'combined' in file:
+                file = file['combined']
             waveforms = file['waveforms']['radiant_data[24][2048]'].array(library='np')
-            station_ids = file['waveforms']['station_number'].array(library='np')
+            station_ids = file['header']['station_number'].array(library='np')
             return waveforms[(station_ids == station_id), :, :][:, channels]
 
     def get_event_times(self, station_id):
@@ -53,7 +56,9 @@ class RNODataProviderRoot:
         readout_times = np.array([], dtype=float)
         for filename in self.__filenames:
             file = uproot.open(filename)
-            station_ids = np.append(station_ids, file['waveforms']['station_number'].array(library='np'))
+            if 'combined' in file:
+                file = file['combined']            
+            station_ids = np.append(station_ids, file['header']['station_number'].array(library='np'))
             readout_times = np.append(readout_times, file['header']['readout_time'].array(library='np'))
         return readout_times[station_ids == station_id]
 
@@ -62,6 +67,8 @@ class RNODataProviderRoot:
         event_ids = np.array([], dtype=float)
         for filename in self.__filenames:
             file = uproot.open(filename)
-            station_ids = np.append(station_ids, file['waveforms']['station_number'].array(library='np'))
+            if 'combined' in file:
+                file = file['combined']
+            station_ids = np.append(station_ids, file['header']['station_number'].array(library='np'))
             event_ids = np.append(event_ids, file['waveforms']['event_number'].array(library='np'))
         return event_ids[station_ids == station_id]
