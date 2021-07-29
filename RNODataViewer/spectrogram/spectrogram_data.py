@@ -49,7 +49,7 @@ def get_spectrogram_data_root(station_id, channel_ids):
 
             def convert(data):
                 tr = NuRadioReco.framework.base_trace.BaseTrace()
-                tr.set_trace(data * units.mV, sampling_rate=1. / (0.5 * units.ns))
+                tr.set_trace(data * units.mV, sampling_rate=3.2 * units.GHz)
                 spectrum =  np.abs(tr.get_frequency_spectrum())
                 # set DC to zero
                 spectrum[0] = 0
