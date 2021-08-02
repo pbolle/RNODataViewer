@@ -1,5 +1,5 @@
-
 import dash_html_components as html
+import os
 import dash
 import argparse
 import glob
@@ -14,11 +14,17 @@ import RNODataViewer.trigger_rate.trigger_rate_uproot
 argparser = argparse.ArgumentParser(description="View RNO Data Set")
 argparser.add_argument('file_location', type=str, help="Path of folder")
 parsed_args = argparser.parse_args()
-filenames_root = glob.glob('{}/*.root'.format(parsed_args.file_location))
-RNODataViewer.base.data_provider_root.RNODataProviderRoot().set_filenames(filenames_root)
-filenames_nur = glob.glob('{}/*.nur'.format(parsed_args.file_location))
-RNODataViewer.base.data_provider_nur.RNODataProvider().set_filenames(filenames_nur)
 
+filenames_root = glob.glob('{}/*.root'.format(parsed_args.file_location))
+filenames_nur = glob.glob('{}/*.nur'.format(parsed_args.file_location))
+# overwrite in case no directory, but a file was provided explicitly...
+if os.path.isfile(parsed_args.file_location):
+    if parsed_args.file_location.endswith(".root"):
+        filenames_root = [parsed_args.file_location]
+    if parsed_args.file_location.endswith(".nur"):
+        filenames_nur = [parsed_args.file_location]
+RNODataViewer.base.data_provider_root.RNODataProviderRoot().set_filenames(filenames_root)
+RNODataViewer.base.data_provider_nur.RNODataProvider().set_filenames(filenames_nur)
 
 app.title = 'RNO Data Browser'
 app.layout = html.Div([
