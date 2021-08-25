@@ -89,7 +89,7 @@ def update_triggeruproot_plot(n_clicks, station_id, channel_ids):
         ))
     fig = go.Figure(plots)
     fig.update_layout(
-          xaxis={'title': 'Event'},
+          xaxis={'title': 'time'},
           yaxis={'title': 'Rate [Hz]'}
       )
     fig.update_yaxes(rangemode="tozero")

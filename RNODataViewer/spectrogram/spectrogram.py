@@ -55,7 +55,7 @@ def update_spectrogram_plot(n_clicks, station_id, channel_ids, file_type):
         cols=len(channel_ids),
         rows=1,
         subplot_titles=subplot_titles,
-        x_title='Time',
+        x_title='Event',
         y_title='f [MHz]',
         shared_xaxes='all',
         shared_yaxes='all'
