@@ -4,6 +4,7 @@ import dash
 import argparse
 import glob
 from RNODataViewer.base.app import app
+import webbrowser
 import RNODataViewer.base.data_provider_root
 import RNODataViewer.base.data_provider_nur
 import RNODataViewer.file_list.file_list
@@ -56,4 +57,6 @@ if __name__ == '__main__':
     if int(dash.__version__.split('.')[0]) <= 1:
         if int(dash.__version__.split('.')[1]) < 0:
             print('WARNING: Dash version 0.39.0 or newer is required, you are running version {}. Please update.'.format(dash.__version__))
-    app.run_server(debug=True, port=8080)
+    port = 8049 #8080 is used by the EventBrowser also...
+    webbrowser.open_new("http://localhost:{}".format(port))
+    app.run_server(debug=True, port=port)

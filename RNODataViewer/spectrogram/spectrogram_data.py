@@ -65,4 +65,5 @@ def get_spectrogram_data_root(station_id, channel_ids):
         subplot_titles.append('Channel {}'.format(channel_id))
     sort_args = np.argsort(gps_times)
     times = astropy.time.Time(gps_times, format="unix", scale="utc").fits
-    return True, times, spectra, d_f
+    #return True, times, spectra, d_f
+    return True, np.arange(0, len(times)), spectra, d_f
