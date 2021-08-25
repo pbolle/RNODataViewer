@@ -8,7 +8,7 @@ station_entries = [
     #{'label': 'Station 23', 'value': 23},
     #{'label': 'Station 24', 'value': 24},
     #{'label': 'Station 25', 'value': 25},
-    {'label': 'Station not set', 'value': 0}
+    {'label': 'Station not set', 'value': 0},
     {'label': 'Fake Station', 'value': 12345}
 ]
 
