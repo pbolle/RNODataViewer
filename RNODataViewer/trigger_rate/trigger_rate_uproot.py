@@ -78,7 +78,7 @@ def update_triggeruproot_plot(n_clicks, station_id, channel_ids):
     bincenters = Time((bins[1:]+bins[:-1])/2., format="unix", scale="utc").fits
 
     plots = []
-    for key in trigger_masks:
+    for key in reversed(trigger_masks):
         contents, b = np.histogram(np.array(gps_times)[trigger_masks[key]], bins)
         plots.append(go.Scatter(
               x = bincenters,
