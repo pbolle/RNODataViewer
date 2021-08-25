@@ -83,7 +83,7 @@ def update_triggeruproot_plot(n_clicks, station_id, channel_ids):
         plots.append(go.Scatter(
               x = bincenters,
               y = contents/(60.*5),
-              mode='markers',
+              mode='lines+markers',
               name='Trigger: {}'.format(key)#,
               #text=point_labels
         ))
