@@ -24,4 +24,9 @@ git checkout feature/integrate_root_files
 # and add the RNODataViewer to your PYTHONPATH
 export PYTHONPATH=$HOME/software/RNODataViewer:$PYTHONPATH
 ```
-
+## Usage
+Execute the ```index.py``` passing either the path to an RNO-G file containing waveform data, or a directory with data files.
+```
+python RNODataViewer/index.py /some/path/to/combined.root
+```
+a web browser window should open automatically, where you can choose stations and (one or several) channels and update overview plots using the refresh buttons in the plot windows
