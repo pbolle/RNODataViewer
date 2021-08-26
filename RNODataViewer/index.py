@@ -17,7 +17,9 @@ argparser.add_argument('file_location', type=str, help="Path of folder")
 parsed_args = argparser.parse_args()
 
 filenames_root = glob.glob('{}/*.root'.format(parsed_args.file_location))
+filenames_root.sort()
 filenames_nur = glob.glob('{}/*.nur'.format(parsed_args.file_location))
+filenames_nur.sort()
 # overwrite in case no directory, but a file was provided explicitly...
 if os.path.isfile(parsed_args.file_location):
     if parsed_args.file_location.endswith(".root"):

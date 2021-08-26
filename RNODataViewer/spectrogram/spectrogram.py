@@ -65,11 +65,13 @@ def update_spectrogram_plot(n_clicks, station_id, channel_ids, file_type):
             go.Heatmap(
                 z=np.abs(spectra[i_channel].T) / units.mV,
                 x=times,
-                y0=0,
+                y0=0.0,
                 dy=d_f / units.MHz,
                 coloraxis='coloraxis',
                 name='Ch.{}'.format(channel_id)
             ), 1, i_channel + 1
         )
     fig.update_layout(coloraxis_colorbar={'title': 'U [mV]'})
+    fig.update_layout({"coloraxis_cmin": 0,
+                       "coloraxis_cmax": 1e3})
     return fig

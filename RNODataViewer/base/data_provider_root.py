@@ -43,13 +43,15 @@ class RNODataProviderRoot:
         return self.__event_io.get_n_events()
 
     def get_waveforms(self, station_id, channels):
+        waveform_array = []
         for filename in self.__filenames:
             file = uproot.open(filename)
             if 'combined' in file:
                 file = file['combined']
             waveforms = file['waveforms']['radiant_data[24][2048]'].array(library='np')
             station_ids = file['header']['station_number'].array(library='np')
-            return waveforms[(station_ids == station_id), :, :][:, channels]
+            waveform_array.append(waveforms[(station_ids == station_id), :, :][:, channels])
+        return np.concatenate(waveform_array)
 
     def get_event_times(self, station_id):
         station_ids = np.array([], dtype=int)
