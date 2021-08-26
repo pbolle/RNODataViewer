@@ -12,6 +12,7 @@ git clone https://github.com/nu-radio/NuRadioMC.git
 cd NuRadioMC
 # get the rnog_eventbrowser branch
 git checkout rnog_eventbrowser
+pip install uproot, awkward
 # and add NuRadioMC to your PYTHONPATH
 export PYTHONPATH=$HOME/software/NuRadioMC:$PYTHONPATH
 ```
