@@ -37,3 +37,5 @@ Execute the ```index.py``` passing either the path to an RNO-G file containing w
 python RNODataViewer/index.py /some/path/to/combined.root
 ```
 a web browser window should open automatically, where you can choose stations and (one or several) channels and update overview plots using the refresh buttons in the plot windows
+
+This tool is still basic right now ;)
