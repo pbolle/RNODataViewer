@@ -5,14 +5,16 @@
 NuRadioMC is needed, the I/O modules for reading in RNO-G .root files are currently still only in the ```rnog_eventbrowser``` branch, you can find install instructions https://github.com/nu-radio/NuRadioMC/wiki in the **manual_installation** section. This should agree with doing the following:
 
 ```
-pip install numpy scipy matplotlib tinydb>=4.1.1 tinydb-serialization aenum astropy radiotools>=0.2.0 h5py pyyaml peakutils requests pymongo dash plotly sphinx
+pip install numpy scipy matplotlib "tinydb>=4.1.1" tinydb-serialization aenum astropy "radiotools>=0.2.0" h5py pyyaml peakutils requests pymongo dash plotly sphinx
+pip install uproot awkward
 pip install cython
 cd $HOME/software #or any other install directory
+
 git clone https://github.com/nu-radio/NuRadioMC.git
 cd NuRadioMC
+
 # get the rnog_eventbrowser branch
 git checkout rnog_eventbrowser
-pip install uproot, awkward
 # and add NuRadioMC to your PYTHONPATH
 export PYTHONPATH=$HOME/software/NuRadioMC:$PYTHONPATH
 ```
