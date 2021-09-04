@@ -17,13 +17,14 @@ class RNODataProviderRoot:
     def set_filenames(self, filenames):
         if len(filenames) > 0:
             self.__filenames = filenames
-            self.__event_io = readRNOGData()
-            self.__event_io.begin(filenames)
-            self.__event_io.run(channels=self.__channels)
+            #self.__event_io = readRNOGData()
+            #self.__event_io.begin(filenames)
+            #self.__event_io.run(channels=self.__channels)
 
-    def set_iterators(self):
+    def set_iterators(self, cut=None):
         self.__event_io = readRNOGData()
         self.__event_io.begin(self.__filenames)
+        self.__event_io._set_iterators(cut=cut)
         self.uproot_iterator_header = self.__event_io.uproot_iterator_header
         self.uproot_iterator_data = self.__event_io.uproot_iterator_data
     
@@ -33,9 +34,9 @@ class RNODataProviderRoot:
     def get_file_names(self):
         return self.__filenames
 
-    def get_first_event(self, station_id):
+    def get_first_event(self, station_id=None):
         for event in self.__event_io.get_events():
-            if station_id in event.get_station_ids():
+            if station_id in event.get_station_ids() or station_id==None:
                 return event
         return None
 
@@ -62,6 +63,17 @@ class RNODataProviderRoot:
                 file = file['combined']            
             station_ids = np.append(station_ids, file['header']['station_number'].array(library='np'))
             readout_times = np.append(readout_times, file['header']['readout_time'].array(library='np'))
+        return readout_times[station_ids == station_id]
+
+    def get_event_times_hdr(self, station_id):
+        station_ids = np.array([], dtype=int)
+        readout_times = np.array([], dtype=float)
+        for filename in self.__filenames:
+            file = uproot.open(filename.replace("combined", "headers"))
+            if 'hdr' in file:
+                file = file['hdr'] 
+            station_ids = np.append(station_ids, file['hdr']['station_number'].array(library='np'))
+            readout_times = np.append(readout_times, file['hdr']['readout_time'].array(library='np'))
         return readout_times[station_ids == station_id]
 
     def get_event_ids(self, station_id):

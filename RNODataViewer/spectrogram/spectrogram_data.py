@@ -28,14 +28,20 @@ def get_spectrogram_data_py(station_id, channel_ids):
     return True, times[sort_args[::-1]], spectra[:, sort_args[::-1]], d_f
 
 
-def get_spectrogram_data_root(station_id, channel_ids):
+def get_spectrogram_data_root(station_id, channel_ids, filenames=None):
+    print("getting spectrogram data")
     data_provider = RNODataViewer.base.data_provider_root.RNODataProviderRoot(channels=channel_ids)
-    first_event = data_provider.get_first_event(station_id)
-    if first_event is None:
-        return False, None, None, None
-    channel = first_event.get_station(station_id).get_channel(channel_ids[0])
+    if not filenames is None:
+        data_provider.set_filenames(filenames)
+    #first_event = data_provider.get_first_event(station_id)
+    #if first_event is None:
+    #    return False, None, None, None
+    #channel = first_event.get_station(station_id).get_channel(channel_ids[0])
     spectra = {}  # np.empty((len(channel_ids), data_provider.get_n_events(), channel.get_number_of_samples() // 2 + 1))
     gps_times = []
+    #TODO this is for testing why it is so slow
+    channel = NuRadioReco.framework.base_trace.BaseTrace()
+    channel.set_trace(np.zeros(2048), sampling_rate=3.2 * units.GHz)
     d_f = channel.get_frequencies()[2] - channel.get_frequencies()[1]
     data_provider.set_iterators()
 
@@ -54,6 +60,8 @@ def get_spectrogram_data_root(station_id, channel_ids):
                 # set DC to zero
                 spectrum[0] = 0
                 return spectrum
+            if len(traces)==0:
+                continue
             spec = np.apply_along_axis(convert, 1, np.array(traces))
             spectra[i_channel].append(spec)
 

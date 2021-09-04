@@ -1,6 +1,7 @@
 import numpy as np
 import itertools
-from RNODataViewer.base.app import app
+from NuRadioReco.eventbrowser.app import app
+#from RNODataViewer.base.app import app
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
@@ -32,65 +33,74 @@ layout = html.Div([
 @app.callback(
     Output('triggeruproot-plot', 'figure'),
     [Input('triggeruproot-reload-button', 'n_clicks')],
-    [State('station-id-dropdown', 'value'),
-     State('channel-id-dropdown', 'value')]
+    [State('station-id-dropdown', 'value')]
 )
-def update_triggeruproot_plot(n_clicks, station_id, channel_ids):
-    if station_id is None:
+def update_triggeruproot_plot(n_clicks, station_ids):
+    BINWIDTH_SEC = 10*60
+    if station_ids is None:
         return RNODataViewer.base.error_message.get_error_message('No Station selected')
-    if len(channel_ids) == 0:
-        return RNODataViewer.base.error_message.get_error_message('No Channels selected')
-    data_provider = RNODataViewer.base.data_provider_root.RNODataProviderRoot(channels=channel_ids)
-    first_event = data_provider.get_first_event(station_id)
-    if first_event is None:
-        return RNODataViewer.base.error_message.get_error_message('Station {} not found in events'.format(station_id))
-    times = []
-    gps_times = []
-
-    trigger_masks = {'rf_trigger' : [],
-            'force_trigger': [],
-            'pps_trigger': [],
-            'ext_trigger': [],
-            'radiant_trigger': [],
-            'lt_trigger': [],
-            'surface_trigger': []}
-    data_provider.set_iterators()
-    for headers in data_provider.uproot_iterator_header:
-        mask_station = headers['station_number'] == station_id
-        gps_times.append(headers['readout_time'][mask_station])
-        for trigger_key in trigger_masks:
-            trigger_masks[trigger_key].append(np.array(headers['trigger_info.'+trigger_key][mask_station]))
-    gps_times = np.concatenate(gps_times)
-    for k in trigger_masks:
-        trigger_masks[k] = np.concatenate(trigger_masks[k])
-    trigger_masks["all"] = np.ones_like(trigger_masks['rf_trigger'])
-
-    bins = np.arange(min(gps_times), max(gps_times)+60*5, 60*5)#min(Time(gps_times, format="unix", scale="utc")), max(Time(gps_times, format="unix", scale="utc"))+dt, dt)
-    bins_fits = Time(bins, format="unix", scale="utc").fits
-
-    contents, bins = np.histogram(np.array(gps_times), bins)
-
+    data_provider = RNODataViewer.base.data_provider_root.RNODataProviderRoot()
+    
+    #station_ids_found = []
+    #for station_id in station_ids:
+    #    first_event = data_provider.get_first_event(station_id)
+    #    if first_event is not None:
+    #        station_ids_found.append(station_id)
+    #if len(station_ids_found)==0:
+    #    return RNODataViewer.base.error_message.get_error_message('Stations {} not found in events'.format(list(station_ids)))
+    plots = []
     subplot_titles = []
 
-    subplot_titles.append('Station {}'.format(station_id))
-    sort_args = np.argsort(gps_times)
-    times = Time(gps_times, format="unix", scale="utc").fits
-    bincenters = Time((bins[1:]+bins[:-1])/2., format="unix", scale="utc").fits
 
-    plots = []
-    for key in reversed(trigger_masks):
-        contents, b = np.histogram(np.array(gps_times)[trigger_masks[key]], bins)
-        plots.append(go.Scatter(
-              x = bincenters,
-              y = contents/(60.*5),
-              mode='lines+markers',
-              name='Trigger: {}'.format(key)#,
-              #text=point_labels
-        ))
+    # get the needed data:
+    station_numbers = np.array([],dtype=int)
+    trigger_times = np.array([])
+
+    trigger_masks = {
+            'rf_trigger' : np.array([],dtype=bool),
+            'force_trigger': np.array([],dtype=bool),
+            'pps_trigger': np.array([],dtype=bool),
+            'ext_trigger': np.array([],dtype=bool),
+            'radiant_trigger': np.array([],dtype=bool),
+            'lt_trigger': np.array([],dtype=bool),
+            'surface_trigger': np.array([],dtype=bool)
+            }
+    data_provider.set_iterators()
+    for headers in data_provider.uproot_iterator_header:
+        station_numbers = np.append(station_numbers, np.array(headers['station_number']))
+        trigger_times = np.append(trigger_times, np.array(headers['readout_time']))
+        for trigger_key in trigger_masks:
+            trigger_masks[trigger_key] = np.append(trigger_masks[trigger_key], np.array(headers['trigger_info.'+trigger_key]))
+    trigger_masks['total'] = np.ones_like(station_numbers, dtype=bool)
+
+    for station_id in station_ids:        
+        mask_station = station_numbers == station_id
+
+        bins = np.arange(min(trigger_times), max(trigger_times)+BINWIDTH_SEC, BINWIDTH_SEC)
+        bins_fits = Time(bins, format="unix", scale="utc").fits
+
+        subplot_titles.append('Station {}'.format(station_id))
+        bincenters = Time((bins[1:]+bins[:-1])/2., format="unix", scale="utc").fits
+
+        for key in trigger_masks:# ["total"]: #trigger_masks
+            contents, b = np.histogram(trigger_times[trigger_masks[key]&mask_station], bins)
+            point_labels = None #contents
+            if key=="total":
+                visible = True
+            else:
+                visible='legendonly'
+            plots.append(go.Scatter(
+                x = bincenters,
+                y = contents/(BINWIDTH_SEC),
+                mode='lines+markers',
+                name='Station: {}, Trigger: {}'.format(station_id, key),
+                visible=visible,
+                text=point_labels
+            ))
     fig = go.Figure(plots)
     fig.update_layout(
-          xaxis={'title': 'time'},
+          xaxis={'title': 'date'},
           yaxis={'title': 'Rate [Hz]'}
       )
-    fig.update_yaxes(rangemode="tozero")
+    fig.update_yaxes(rangemode='tozero')
     return fig

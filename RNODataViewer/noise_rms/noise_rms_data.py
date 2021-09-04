@@ -22,11 +22,16 @@ def get_noise_rms_data_nur(station_id, channel_ids):
     return True, times, noise_rms, point_labels
 
 
-def get_noise_rms_data_root(station_id, channel_ids):
+def get_noise_rms_data_root(station_id, channel_ids, filenames=None):
+    print("Getting noise data")
     data_provider = RNODataViewer.base.data_provider_root.RNODataProviderRoot(channels=channel_ids)
+    if not filenames is None:
+        data_provider.set_filenames(filenames)
+    print("FILES: ", data_provider.get_file_names())
     times = data_provider.get_event_times(station_id)
     waveforms = data_provider.get_waveforms(station_id, channel_ids).astype(float)
     waveforms -= np.mean(waveforms, axis=2, keepdims=True)
     noise_rms = np.sqrt(np.mean(waveforms**2, axis=2))
     event_ids = data_provider.get_event_ids(station_id)
-    return True, astropy.time.Time(times, format="unix", scale="utc").fits, noise_rms.T, event_ids
+    point_labels = ['Event {}'.format(ev_id) for ev_id in event_ids]
+    return True, astropy.time.Time(times, format="unix", scale="utc").fits, noise_rms.T, point_labels

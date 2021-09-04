@@ -1,5 +1,6 @@
 import numpy as np
-from RNODataViewer.base.app import app
+from NuRadioReco.eventbrowser.app import app
+#from RNODataViewer.base.app import app
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
@@ -9,7 +10,7 @@ import RNODataViewer.base.error_message
 from NuRadioReco.utilities import units
 from NuRadioReco.framework.parameters import channelParameters as chp
 import RNODataViewer.noise_rms.noise_rms_data
-
+import webbrowser
 
 layout = html.Div([
     html.Div([
@@ -29,15 +30,23 @@ layout = html.Div([
     ], className='panel panel-default')
 ])
 
+def do_click(trace, points, state):
+    if points.point_inds:
+        ind = points.point_inds[0]
+    url = "https://www.zeuthen.desy.de/~shallman/rnog_run_summary.html"
+    webbrowser.open_new_tab(url)
+    print("click")
 
 @app.callback(
     Output('noise-rms-plot', 'figure'),
     [Input('noise-rms-reload-button', 'n_clicks')],
     [State('station-id-dropdown', 'value'),
      State('channel-id-dropdown', 'value'),
-     State('file-type-dropdown', 'value')]
+     State('file-type-dropdown', 'value'),
+     State('file-name-dropdown', 'value'),]
 )
-def update_noise_rms_plot(n_clicks, station_id, channel_ids, file_type):
+def update_noise_rms_plot(n_clicks, station_id, channel_ids, file_type, file_names):
+    print("updating noise rms plot")
     if station_id is None:
         return RNODataViewer.base.error_message.get_error_message('No Station selected')
     if len(channel_ids) == 0:
@@ -45,19 +54,22 @@ def update_noise_rms_plot(n_clicks, station_id, channel_ids, file_type):
     if file_type == 'nur':
         has_station, times, noise_rms, point_labels = RNODataViewer.noise_rms.noise_rms_data.get_noise_rms_data_nur(station_id, channel_ids)
     else:
-        has_station, times, noise_rms, point_labels = RNODataViewer.noise_rms.noise_rms_data.get_noise_rms_data_root(station_id, channel_ids)
+        has_station, times, noise_rms, point_labels = RNODataViewer.noise_rms.noise_rms_data.get_noise_rms_data_root(station_id, channel_ids, file_names)
     if not has_station:
         return RNODataViewer.base.error_message.get_error_message('Station {} not found in events'.format(station_id))
     plots = []
     for i_channel, channel_id in enumerate(channel_ids):
-        plots.append(go.Scatter(
+        scatter = go.Scatter(
             x=times,
             y=noise_rms[i_channel] / units.mV,
             mode='markers',
             name='Channel {}'.format(channel_id),
             text=point_labels
-        ))
+        )
+        scatter.on_click(do_click)
+        plots.append(scatter)
     fig = go.Figure(plots)
+    fig.data[0].on_click(do_click)
     fig.update_layout(
         xaxis={'title': 'time'},
         yaxis={'title': 'noise RMS [mV]'}
