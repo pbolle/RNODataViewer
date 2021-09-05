@@ -1,5 +1,11 @@
 # RNODataViewer
 
+## Aim of the monitoring branch
+The monitoring branch is intended to provide a broad overview of the DAQ history of the detector for a selected period, and give the possibility to look deeper into a bunch runs for an individual station, or individual events of a specific data file. To this end it feaures three tabs:
+* Monitoring Overview
+* Run Browser
+* Event Browser
+
 ## Setup guide
 ### Setting up NuRadioMC
 NuRadioMC is needed, the I/O modules for reading in RNO-G .root files are currently still only in the ```rnog_eventbrowser``` branch, you can find install instructions https://github.com/nu-radio/NuRadioMC/wiki in the **manual_installation** section. This should agree with doing the following:
