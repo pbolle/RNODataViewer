@@ -33,5 +33,6 @@ def get_noise_rms_data_root(station_id, channel_ids, filenames=None):
     waveforms -= np.mean(waveforms, axis=2, keepdims=True)
     noise_rms = np.sqrt(np.mean(waveforms**2, axis=2))
     event_ids = data_provider.get_event_ids(station_id)
-    point_labels = ['Event {}'.format(ev_id) for ev_id in event_ids]
+    run_numbers = data_provider.get_run_numbers(station_id)
+    point_labels = ['Run {}, Event {} ({}-th in file)'.format(int(run),int(ev_id), i) for i, (run, ev_id) in enumerate(zip(run_numbers,event_ids))]
     return True, astropy.time.Time(times, format="unix", scale="utc").fits, noise_rms.T, point_labels

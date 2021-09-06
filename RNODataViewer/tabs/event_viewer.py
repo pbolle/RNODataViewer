@@ -7,12 +7,9 @@ import json
 import numpy as np
 import uuid
 import glob
-from NuRadioReco.eventbrowser.app import app
-#from RNODataViewer.base.app import app
-from NuRadioReco.eventbrowser.apps import overview
-from NuRadioReco.eventbrowser.apps import traces
-from NuRadioReco.eventbrowser.apps import cosmic_rays
-from NuRadioReco.eventbrowser.apps import simulation
+#from NuRadioReco.eventbrowser.app import app
+from RNODataViewer.base.app import app
+from RNODataViewer.apps import traces
 import os
 import argparse
 import NuRadioReco.eventbrowser.dataprovider
@@ -60,20 +57,20 @@ event_viewer_layout = html.Div([
             html.Div([
                 html.Div([
                     html.Div('File location:', className='input-group-text')
-                    ], className='input-group-addon', style={'display': 'inline-block'}),
+                    ], className='input-group-addon', style={'width':'200px'}),
                 dcc.Input(id='datafolder', placeholder='filename', type='text', value=data_folder,
                           className='form-control')
-            ], className='input-group', style={"width":"50%"}),
+            ], className='input-group', style={"width":"99%"}),
             html.Div([
                 dcc.Dropdown(id='filename',
                              options=[],
                              multi=False,
                              value=starting_filename,
-                             className='custom-dropdown', style={"width":"40%"}),
+                             className='custom-dropdown',style={'width':'100%'}),
                 html.Div([
                     html.Button('open file', id='btn-open-file', className='btn btn-default')
                 ], className='input-group-btn'),
-                ], className='input-group', style={"width":"50%"}),
+                ], className='input-group', style={"width":"75%"}),
             html.Div(
                 [
                     html.Div(

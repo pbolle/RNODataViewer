@@ -8,17 +8,17 @@ import glob
 import numpy as np
 import random
 import logging
-from NuRadioReco.eventbrowser.app import app
-# from RNODataViewer.base.app import app
+from RNODataViewer.base.app import app
 import webbrowser
 import RNODataViewer.base.data_provider_root
 import RNODataViewer.base.data_provider_nur
 import RNODataViewer.file_list.file_list
 import RNODataViewer.station_selection.station_selection
-#import RNODataViewer.spectrogram.spectrogram
-#import RNODataViewer.noise_rms.noise_rms
 import RNODataViewer.trigger_rate.trigger_rate_uproot
 from file_list.run_stats import RunStats
+import astropy.time
+import pandas as pd
+
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(description="View RNO Data Set")
@@ -36,10 +36,6 @@ logging.info("starting online monitoring")
 
 
 # get the input files
-import astropy.time
-
-import pandas as pd
-
 if not parsed_args.monitoring:
     filenames_root = glob.glob('{}/*.root'.format(parsed_args.file_location))
     filenames_root.sort()
@@ -56,9 +52,9 @@ else:
     run_table = rs.get_table()
     filenames_root = run_table.filenames_root
     filenames_nur = []
+
 RNODataViewer.base.data_provider_root.RNODataProviderRoot().set_filenames(filenames_root)
 RNODataViewer.base.data_provider_nur.RNODataProvider().set_filenames(filenames_nur)
-
 
 def get_slider_marks(ymin=2021, ymax=None, months = np.arange(1,13)):
     if ymax==None:
@@ -73,11 +69,9 @@ def get_slider_marks(ymin=2021, ymax=None, months = np.arange(1,13)):
                     continue
             for d in [1,15]:
                 slider_marks[int(astropy.time.Time("{}-{}-{}".format(str(y).zfill(4), str(m).zfill(2), str(d).zfill(2)), format="iso").mjd)] = "{}-{}-{}".format(str(y).zfill(4), str(m).zfill(2), str(d).zfill(2))
-    print(slider_marks)
     return slider_marks
 slider_marks = get_slider_marks()
 
-app.title = 'RNO Data Browser'
 overview_layout = html.Div([
     RNODataViewer.station_selection.station_selection.layout,
     html.Div([html.Div('Time selector', style={'flex': '1'}),
@@ -144,4 +138,6 @@ if __name__ == '__main__':
             print('WARNING: Dash version 0.39.0 or newer is required, you are running version {}. Please update.'.format(dash.__version__))
     port = 8087 #8080 is used by the EventBrowser also...
     webbrowser.open_new("http://localhost:{}".format(port))
+    
+    app.title = 'RNO Data Browser'
     app.run_server(debug=True, port=port)

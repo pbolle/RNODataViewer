@@ -5,15 +5,15 @@ import dash
 from dash.dependencies import Input, Output
 import dash_html_components as html
 import dash_core_components as dcc
+from tabs import rnog_overview
 from tabs import run_viewer
 from tabs import event_viewer
-from tabs import rnog_overview
 from tabs.rnog_overview import *
 from tabs.event_viewer import *
 from tabs.run_viewer import *
 
-#from RNODataViewer.base.app import app
-from NuRadioReco.eventbrowser.app import app
+from RNODataViewer.base.app import app
+#from NuRadioReco.eventbrowser.app import app
 app.config.suppress_callback_exceptions = True
 
 app.layout = html.Div([
@@ -52,6 +52,6 @@ if __name__ == '__main__':
     if int(dash.__version__.split('.')[0]) <= 1:
         if int(dash.__version__.split('.')[1]) < 0:
             print('WARNING: Dash version 0.39.0 or newer is required, you are running version {}.   Please update.'.format(dash.__version__))
-    port = 8087 # is used by the EventBrowser also...
+    port = 8043 # is used by the EventBrowser also...
     webbrowser.open_new("http://localhost:{}".format(port))
     app.run_server(debug=True, port=port)

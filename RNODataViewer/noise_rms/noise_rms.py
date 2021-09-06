@@ -1,6 +1,6 @@
 import numpy as np
-from NuRadioReco.eventbrowser.app import app
-#from RNODataViewer.base.app import app
+#from NuRadioReco.eventbrowser.app import app
+from RNODataViewer.base.app import app
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
@@ -40,21 +40,19 @@ def do_click(trace, points, state):
 @app.callback(
     Output('noise-rms-plot', 'figure'),
     [Input('noise-rms-reload-button', 'n_clicks')],
-    [State('station-id-dropdown', 'value'),
+    [State('station-id-dropdown-single', 'value'),
      State('channel-id-dropdown', 'value'),
-     State('file-type-dropdown', 'value'),
-     State('file-name-dropdown', 'value'),]
+     State('file-name-dropdown-2', 'value'),]
 )
-def update_noise_rms_plot(n_clicks, station_id, channel_ids, file_type, file_names):
+def update_noise_rms_plot(n_clicks, station_id, channel_ids, file_names):
     print("updating noise rms plot")
+    if len(file_names) == 0:
+        return RNODataViewer.base.error_message.get_error_message('No File chosen')
     if station_id is None:
         return RNODataViewer.base.error_message.get_error_message('No Station selected')
     if len(channel_ids) == 0:
         return RNODataViewer.base.error_message.get_error_message('No Channels selected')
-    if file_type == 'nur':
-        has_station, times, noise_rms, point_labels = RNODataViewer.noise_rms.noise_rms_data.get_noise_rms_data_nur(station_id, channel_ids)
-    else:
-        has_station, times, noise_rms, point_labels = RNODataViewer.noise_rms.noise_rms_data.get_noise_rms_data_root(station_id, channel_ids, file_names)
+    has_station, times, noise_rms, point_labels = RNODataViewer.noise_rms.noise_rms_data.get_noise_rms_data_root(station_id, channel_ids, file_names)
     if not has_station:
         return RNODataViewer.base.error_message.get_error_message('Station {} not found in events'.format(station_id))
     plots = []

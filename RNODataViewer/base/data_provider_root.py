@@ -78,7 +78,7 @@ class RNODataProviderRoot:
 
     def get_event_ids(self, station_id):
         station_ids = np.array([], dtype=int)
-        event_ids = np.array([], dtype=float)
+        event_ids = np.array([], dtype=int)
         for filename in self.__filenames:
             file = uproot.open(filename)
             if 'combined' in file:
@@ -86,3 +86,15 @@ class RNODataProviderRoot:
             station_ids = np.append(station_ids, file['header']['station_number'].array(library='np'))
             event_ids = np.append(event_ids, file['waveforms']['event_number'].array(library='np'))
         return event_ids[station_ids == station_id]
+
+    def get_run_numbers(self, station_id):
+        station_ids = np.array([], dtype=int)
+        run_numbers = np.array([], dtype=int)
+        for filename in self.__filenames:
+            file = uproot.open(filename)
+            if 'combined' in file:
+                file = file['combined']
+            station_ids = np.append(station_ids, file['header']['station_number'].array(library='np'))
+            run_numbers = np.append(run_numbers, file['waveforms']['run_number'].array(library='np'))
+        return run_numbers[station_ids == station_id]
+

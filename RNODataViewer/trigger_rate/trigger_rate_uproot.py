@@ -1,7 +1,7 @@
 import numpy as np
 import itertools
-from NuRadioReco.eventbrowser.app import app
-#from RNODataViewer.base.app import app
+#from NuRadioReco.eventbrowser.app import app
+from RNODataViewer.base.app import app
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
@@ -62,8 +62,7 @@ def update_triggeruproot_plot(n_clicks, station_ids):
             'pps_trigger': np.array([],dtype=bool),
             'ext_trigger': np.array([],dtype=bool),
             'radiant_trigger': np.array([],dtype=bool),
-            'lt_trigger': np.array([],dtype=bool),
-            'surface_trigger': np.array([],dtype=bool)
+            'lt_trigger': np.array([],dtype=bool)
             }
     data_provider.set_iterators()
     for headers in data_provider.uproot_iterator_header:

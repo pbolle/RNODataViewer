@@ -14,6 +14,7 @@ def get_spectrogram_data_py(station_id, channel_ids):
     channel = first_event.get_station(station_id).get_channel(channel_ids[0])
     spectra = np.empty((len(channel_ids), data_provider.get_n_events(), channel.get_number_of_samples() // 2 + 1))
     times = []
+    labels = []
     gps_times = np.zeros(data_provider.get_n_events())
     d_f = channel.get_frequencies()[2] - channel.get_frequencies()[1]
     for i_event, event in enumerate(data_provider.get_event_iterator()()):
@@ -23,9 +24,10 @@ def get_spectrogram_data_py(station_id, channel_ids):
             gps_times[i_event] = station.get_station_time().gps
             for i_channel, channel_id in enumerate(channel_ids):
                 spectra[i_channel, i_event] = np.abs(station.get_channel(channel_id).get_frequency_spectrum())
+            labels.append("Event {}".format(event))
     sort_args = np.argsort(gps_times)
     times = np.array(times)
-    return True, times[sort_args[::-1]], spectra[:, sort_args[::-1]], d_f
+    return True, times[sort_args[::-1]], spectra[:, sort_args[::-1]], d_f, labels
 
 
 def get_spectrogram_data_root(station_id, channel_ids, filenames=None):
@@ -43,8 +45,8 @@ def get_spectrogram_data_root(station_id, channel_ids, filenames=None):
     channel = NuRadioReco.framework.base_trace.BaseTrace()
     channel.set_trace(np.zeros(2048), sampling_rate=3.2 * units.GHz)
     d_f = channel.get_frequencies()[2] - channel.get_frequencies()[1]
-    data_provider.set_iterators()
 
+    data_provider.set_iterators()
     for headers, events in zip(data_provider.uproot_iterator_header, data_provider.uproot_iterator_data):
         mask_station = headers['station_number'] == station_id
         gps_times.append(headers['readout_time'][mask_station])
@@ -73,5 +75,9 @@ def get_spectrogram_data_root(station_id, channel_ids, filenames=None):
         subplot_titles.append('Channel {}'.format(channel_id))
     sort_args = np.argsort(gps_times)
     times = astropy.time.Time(gps_times, format="unix", scale="utc").fits
+
+    event_ids = data_provider.get_event_ids(station_id)
+    run_numbers = data_provider.get_run_numbers(station_id)
+    labels = event_ids
     #return True, times, spectra, d_f
-    return True, np.arange(0, len(times)), spectra, d_f
+    return True, np.arange(0, len(times)), spectra, d_f, labels
