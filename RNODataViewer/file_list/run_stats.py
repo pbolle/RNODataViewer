@@ -1,5 +1,5 @@
 import numpy as np
-import os
+import os,sys
 import astropy.time
 import pandas as pd
 
@@ -20,4 +20,8 @@ class RunStats:
     def get_table(self):
         return self.run_table
 
-DATA_DIR="/Users/shallmann/Desktop/rnog_field_data"
+try:
+    DATA_DIR = os.environ["RNO_DATA_DIR"]
+    print("DATA DIRECTORY:", DATA_DIR)
+except KeyError:
+    sys.exit("Set environment variable RNO_DATA_DIR to top level path holding directories station11,station21,station22, etc.")

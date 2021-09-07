@@ -5,16 +5,43 @@ import dash
 from dash.dependencies import Input, Output
 import dash_html_components as html
 import dash_core_components as dcc
+
+from RNODataViewer.base.app import app
+app.config.suppress_callback_exceptions = True
+
+import RNODataViewer.base.data_provider_root
+import RNODataViewer.base.data_provider_nur
+from file_list.run_stats import RunStats
+
 from tabs import rnog_overview
 from tabs import run_viewer
 from tabs import event_viewer
+#TODO remove asterix import...
 from tabs.rnog_overview import *
 from tabs.event_viewer import *
 from tabs.run_viewer import *
 
-from RNODataViewer.base.app import app
-#from NuRadioReco.eventbrowser.app import app
-app.config.suppress_callback_exceptions = True
+from file_list.run_stats import RunStats, DATA_DIR
+import astropy.time
+import pandas as pd
+import sys, os
+  
+#argparser = argparse.ArgumentParser(description="View RNO Data Set")
+#argparser.add_argument('file_location', type=str, help="Path of folder", default="/Users/shallmann/Desktop/rnog_field_data")
+#argparser.add_argument('--monitoring', action="store_true", help="if set, run as monitoring instance, <file_location> should be top level directory where data (i.e. the stationXX directories) sit")
+#parsed_args = argparser.parse_args()
+  
+
+logging.info("starting online monitoring")
+
+rs = RunStats(DATA_DIR)
+run_table = rs.get_table()
+filenames_root = run_table.filenames_root
+filenames_nur = []
+  
+RNODataViewer.base.data_provider_root.RNODataProviderRoot().set_filenames(filenames_root)
+RNODataViewer.base.data_provider_nur.RNODataProvider().set_filenames(filenames_nur)
+
 
 app.layout = html.Div([
     html.Div([
@@ -26,7 +53,7 @@ app.layout = html.Div([
                 dcc.Tab(label= 'Run Browser', value= 'runbrowser_tab'),
                 dcc.Tab(label= 'Event Browser', value= 'eventbrowser_tab')
             ],
-            value='tab-1-example',
+            value='overview_tab',
             id='tabs-example'
         ),
     html.Div(id='tabs-content-example')
@@ -48,10 +75,11 @@ def render_content(tab):
         return event_viewer.event_viewer_layout
 
 
+
 if __name__ == '__main__':
     if int(dash.__version__.split('.')[0]) <= 1:
         if int(dash.__version__.split('.')[1]) < 0:
             print('WARNING: Dash version 0.39.0 or newer is required, you are running version {}.   Please update.'.format(dash.__version__))
-    port = 8043 # is used by the EventBrowser also...
+    port = 8043 #8080 is used by the EventBrowser also...
     webbrowser.open_new("http://localhost:{}".format(port))
     app.run_server(debug=True, port=port)

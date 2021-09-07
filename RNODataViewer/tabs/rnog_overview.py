@@ -15,11 +15,11 @@ import RNODataViewer.base.data_provider_nur
 import RNODataViewer.file_list.file_list
 import RNODataViewer.station_selection.station_selection
 import RNODataViewer.trigger_rate.trigger_rate_uproot
-from file_list.run_stats import RunStats
+from file_list.run_stats import RunStats, DATA_DIR
 import astropy.time
 import pandas as pd
 
-
+'''
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(description="View RNO Data Set")
     argparser.add_argument('file_location', type=str, help="Path of folder", default="/Users/shallmann/Desktop/rnog_field_data")
@@ -55,7 +55,11 @@ else:
 
 RNODataViewer.base.data_provider_root.RNODataProviderRoot().set_filenames(filenames_root)
 RNODataViewer.base.data_provider_nur.RNODataProvider().set_filenames(filenames_nur)
+'''
 
+rs = RunStats(DATA_DIR)
+run_table = rs.get_table()
+print(len(run_table))
 def get_slider_marks(ymin=2021, ymax=None, months = np.arange(1,13)):
     if ymax==None:
         ymax=astropy.time.Time.now().ymdhms[0]
@@ -131,6 +135,7 @@ def update_output(value, station_ids=[11,21,22]):
                             data=retdata.to_dict("records"),
                             columns=[{'id': x, 'name': x} for x in retdata.columns]
                 )
+
 
 if __name__ == '__main__':
     if int(dash.__version__.split('.')[0]) <= 1:
