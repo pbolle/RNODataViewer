@@ -41,6 +41,6 @@ Execute the ```monitoring.py```. It requires the `RNO_DATA_DIR` variable to be s
 
 After adapting the paths therein to your local install and data directories, you can also run:
 ```
-bash run_monitoring.sh
+bash run_monitor.sh
 ```
 a web browser window should open automatically.
