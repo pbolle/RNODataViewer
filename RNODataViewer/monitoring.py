@@ -6,8 +6,8 @@ import dash
 from dash.dependencies import Input, Output
 import dash_html_components as html
 import dash_core_components as dcc
-
-from RNODataViewer.base.app import app
+import webbrowser
+from RNODataViewer.base.app import app,server
 app.config.suppress_callback_exceptions = True
 
 import RNODataViewer.base.data_provider_root
@@ -17,11 +17,8 @@ from file_list.run_stats import RunStats
 from tabs import rnog_overview
 from tabs import run_viewer
 from tabs import event_viewer
-#TODO remove asterix import...
-from tabs.rnog_overview import *
-from tabs.event_viewer import *
-from tabs.run_viewer import *
 
+import logging
 from file_list.run_stats import RUN_TABLE #RunStats, DATA_DIR
 import astropy.time
 import pandas as pd
@@ -34,7 +31,6 @@ argparser.add_argument('--port', default=8080, help="Specify the port the event 
 #argparser.add_argument('--monitoring', action="store_true", help="if set, run as monitoring instance, <file_location> should be top level directory where data (i.e. the stationXX directories) sit")
 parsed_args = argparser.parse_args()
   
-
 logging.info("starting online monitoring")
 
 #rs = RunStats(DATA_DIR)
@@ -78,11 +74,11 @@ def render_content(tab):
         return event_viewer.event_viewer_layout
 
 
-
 if __name__ == '__main__':
     if int(dash.__version__.split('.')[0]) <= 1:
         if int(dash.__version__.split('.')[1]) < 0:
             print('WARNING: Dash version 0.39.0 or newer is required, you are running version {}.   Please update.'.format(dash.__version__))
-    port = 8043 #8080 is used by the EventBrowser also...
-    webbrowser.open_new("http://localhost:{}".format(port))
-    app.run_server(debug=True, port=port)
+    port = parsed_args.port
+    if parsed_args.open_window:
+        webbrowser.open_new("http://localhost:{}".format(port))
+    app.run_server(debug=False, port=port)
