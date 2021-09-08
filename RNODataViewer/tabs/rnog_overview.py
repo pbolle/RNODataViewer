@@ -19,47 +19,10 @@ from file_list.run_stats import RUN_TABLE #RunStats, DATA_DIR
 import astropy.time
 import pandas as pd
 
-'''
-if __name__ == "__main__":
-    argparser = argparse.ArgumentParser(description="View RNO Data Set")
-    argparser.add_argument('file_location', type=str, help="Path of folder", default="/Users/shallmann/Desktop/rnog_field_data")
-    argparser.add_argument('--monitoring', action="store_true", help="if set, run as monitoring instance, <file_location> should be top level directory where data (i.e. the stationXX directories) sit")
-    parsed_args = argparser.parse_args()
 
-else:
-    class PA:
-        def __init__(self):
-            self.file_location = "/Users/shallmann/Desktop/rnog_field_data"
-            self.monitoring = True
-    parsed_args = PA()
-logging.info("starting online monitoring")
-
-
-# get the input files
-if not parsed_args.monitoring:
-    filenames_root = glob.glob('{}/*.root'.format(parsed_args.file_location))
-    filenames_root.sort()
-    filenames_nur = glob.glob('{}/*.nur'.format(parsed_args.file_location))
-    filenames_nur.sort()
-    # overwrite in case no directory, but a file was provided explicitly...
-    if os.path.isfile(parsed_args.file_location):
-        if parsed_args.file_location.endswith(".root"):
-            filenames_root = [parsed_args.file_location]
-        if parsed_args.file_location.endswith(".nur"):
-            filenames_nur = [parsed_args.file_location]
-else:
-    rs = RunStats(parsed_args.file_location)
-    run_table = rs.get_table()
-    filenames_root = run_table.filenames_root
-    filenames_nur = []
-
-RNODataViewer.base.data_provider_root.RNODataProviderRoot().set_filenames(filenames_root)
-RNODataViewer.base.data_provider_nur.RNODataProvider().set_filenames(filenames_nur)
-'''
-
-#rs = RunStats(DATA_DIR)
 run_table = RUN_TABLE #rs.get_table()
 print(len(run_table))
+
 def get_slider_marks(ymin=2021, ymax=None, months = np.arange(1,13)):
     if ymax==None:
         ymax=astropy.time.Time.now().ymdhms[0]
@@ -137,12 +100,3 @@ def update_output(value, station_ids=[11,21,22]):
                 )
 
 
-if __name__ == '__main__':
-    if int(dash.__version__.split('.')[0]) <= 1:
-        if int(dash.__version__.split('.')[1]) < 0:
-            print('WARNING: Dash version 0.39.0 or newer is required, you are running version {}. Please update.'.format(dash.__version__))
-    port = 8087 #8080 is used by the EventBrowser also...
-    webbrowser.open_new("http://localhost:{}".format(port))
-    
-    app.title = 'RNO Data Browser'
-    app.run_server(debug=True, port=port)
