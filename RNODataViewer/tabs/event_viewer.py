@@ -17,7 +17,7 @@ import NuRadioReco.eventbrowser.dataprovider_root
 import logging
 import webbrowser
 from NuRadioReco.modules.base import module
-from file_list.run_stats import DATA_DIR, RunStats
+from file_list.run_stats import RUN_TABLE, DATA_DIR #, RunStats
 logger = module.setup_logger(level=logging.INFO)
 
 """
@@ -255,8 +255,8 @@ def set_uuid(pathname, juser_id):
               [Input('datafolder', 'value')])
 def set_filename_dropdown(folder):
     #if parsed_args.rnog_file:
-        rs = RunStats(folder)
-        run_table = rs.get_table()
+        #rs = RunStats(folder)
+        run_table = RUN_TABLE #rs.get_table()
         filtered_names = list(run_table.filenames_root)
         rrr =  [{'label': "Station {}, Run {}".format(row.station, row.run), 'value': row.filenames_root} for index, row in run_table.iterrows()]
         return rrr

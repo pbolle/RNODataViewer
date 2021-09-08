@@ -12,7 +12,7 @@ import RNODataViewer.station_selection.station_selection
 import RNODataViewer.spectrogram.spectrogram
 import RNODataViewer.noise_rms.noise_rms
 #import RNODataViewer.trigger_rate.trigger_rate_uproot
-from file_list.run_stats import DATA_DIR, RunStats
+from file_list.run_stats import RUN_TABLE #DATA_DIR, RunStats
 import numpy as np
 
 data_provider_run = RNODataViewer.base.data_provider_root.RNODataProviderRoot()
@@ -47,9 +47,7 @@ run_viewer_layout = html.Div([
 
 @app.callback(Output('file-name-dropdown-2', 'options'),
               [Input('station-id-dropdown-single', 'value')])
-def set_filename_dropdown(stations , folder=DATA_DIR):
-        rs = RunStats(folder)
-        run_table = rs.get_table()
+def set_filename_dropdown(stations , run_table=RUN_TABLE):
         station_mask = np.array([np.isin(s, stations) for s in run_table.station], dtype=bool)
         run_table = run_table[station_mask]
         filtered_names = list(run_table.filenames_root)

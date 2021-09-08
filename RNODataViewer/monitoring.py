@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import argparse
 
 import dash
 from dash.dependencies import Input, Output
@@ -21,21 +22,23 @@ from tabs.rnog_overview import *
 from tabs.event_viewer import *
 from tabs.run_viewer import *
 
-from file_list.run_stats import RunStats, DATA_DIR
+from file_list.run_stats import RUN_TABLE #RunStats, DATA_DIR
 import astropy.time
 import pandas as pd
 import sys, os
   
-#argparser = argparse.ArgumentParser(description="View RNO Data Set")
-#argparser.add_argument('file_location', type=str, help="Path of folder", default="/Users/shallmann/Desktop/rnog_field_data")
+argparser = argparse.ArgumentParser(description="View RNO Data Set")
+argparser.add_argument('--open-window', const=True, default=False, action='store_const',
+                         help="Open the event display in a new browser tab on startup")
+argparser.add_argument('--port', default=8080, help="Specify the port the event display will run on")
 #argparser.add_argument('--monitoring', action="store_true", help="if set, run as monitoring instance, <file_location> should be top level directory where data (i.e. the stationXX directories) sit")
-#parsed_args = argparser.parse_args()
+parsed_args = argparser.parse_args()
   
 
 logging.info("starting online monitoring")
 
-rs = RunStats(DATA_DIR)
-run_table = rs.get_table()
+#rs = RunStats(DATA_DIR)
+run_table = RUN_TABLE #rs.get_table()
 filenames_root = run_table.filenames_root
 filenames_nur = []
   

@@ -15,7 +15,7 @@ import RNODataViewer.base.data_provider_nur
 import RNODataViewer.file_list.file_list
 import RNODataViewer.station_selection.station_selection
 import RNODataViewer.trigger_rate.trigger_rate_uproot
-from file_list.run_stats import RunStats, DATA_DIR
+from file_list.run_stats import RUN_TABLE #RunStats, DATA_DIR
 import astropy.time
 import pandas as pd
 
@@ -57,8 +57,8 @@ RNODataViewer.base.data_provider_root.RNODataProviderRoot().set_filenames(filena
 RNODataViewer.base.data_provider_nur.RNODataProvider().set_filenames(filenames_nur)
 '''
 
-rs = RunStats(DATA_DIR)
-run_table = rs.get_table()
+#rs = RunStats(DATA_DIR)
+run_table = RUN_TABLE #rs.get_table()
 print(len(run_table))
 def get_slider_marks(ymin=2021, ymax=None, months = np.arange(1,13)):
     if ymax==None:
