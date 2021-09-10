@@ -37,10 +37,28 @@ git checkout feature/monitoring
 export PYTHONPATH=$HOME/software/RNODataViewer:$PYTHONPATH
 ```
 ## Usage
-Execute the ```monitoring.py```. It requires the `RNO_DATA_DIR` variable to be set to the top level of the data containing files as `stationXX/runXXX/combined.root` (As in the data directories in WISC/DESY)
+Execute the ```monitoring.py  --port 8050 --open-window``` (with a port of your choice). It requires the `RNO_DATA_DIR` variable to be set to the top level of the data containing files as `stationXX/runXXX/combined.root` (As in the data directories in WISC/DESY). You can choose if you want to copy the dataset to a local directory or just mount the remote one ad WISC/DESY). You will also need to add the NuRadioMC and RNODataViewer to your `PYTHONPATH` (see above).
 
-After adapting the paths therein to your local install and data directories, you can also run:
+Alternatively, after adapting the paths therein to your local install and data directories, you can also run:
 ```
 bash run_monitor.sh
 ```
 a web browser window should open automatically.
+
+## Open points
+- General
+  - exchange the runtable generation from downloading a .csv (which is currently updated at desy via cron job) by a run database.
+  - switch from "new page" tabs to child tabs, such that data does not be reentered each time after switching tabs
+  - display selected time range
+- Overview page
+  - produce useful plots for the overview page from the table (these plots will update fast compared to the current trigger rate plots)
+  - allow on the overview page to inspect also header files instead of the combined files including waveform data
+  - other suggestions?
+- Run viewer
+  - 2d plot to inspect trace spectra
+  - 1D traces/spectra median/quantile projections
+  - other suggestions?  
+- Event viewer
+  - remove path field (which does not speak to any callbacks anyway)
+  - channel labelling
+  - other suggestions?   
